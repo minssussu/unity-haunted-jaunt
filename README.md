@@ -28,11 +28,11 @@ Brett DeWitt
 
 #### Feature
 
-The player is alerted when they are facing the exit by a UI text message.
+The player is alerted by a UI text message when they are facing the exit.
 
 #### Implementation
 
-Structurally, I tried to mimic the observer pattern used by the ghosts to detect the player. This way project architecture is consistent, and it provides a reasonable way of separating concerns. I added an `ExitDetector` object as a child to the player object `JohnLemon`. The script finds the direction of the exit relative to the player, then uses Vector3.Dot to determine how closely the play is to matching that direction. A public `facingThreshold` value is used as a comparison to determine if the player's direction is facing toward the exit within a reasonable margin. If it is, a UI text is enabled, alerting the player that they are headed in the right direction.
+Structurally, I tried to mimic the observer pattern used by the ghosts to detect the player. This way the project architecture is consistent, and it provides a reasonable separation of concerns. I added an `ExitDetector` object as a child to the player object `JohnLemon`. The script finds the direction of the exit relative to the player (vector subtraction), then uses Vector3.Dot to determine the players facing relative to the direction of the exit. A public `facingThreshold` value is used as a comparison to determine if the player's facing is within a reasonable margin. If it is, a UI text is enabled alerting the player that they are headed toward the exit.
 
 ```c#
     // Update is called once per frame
