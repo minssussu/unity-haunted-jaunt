@@ -51,3 +51,67 @@ Structurally, I tried to mimic the observer pattern used by the ghosts to detect
         exitAlertText.enabled = isFacingExit;
     }
 ```
+
+## Author
+
+Ashley Rush
+
+### Linear Interpolation
+
+#### Feature
+
+If the player comes into contact with a bed, there is a 1 in 10 chance they will be sent to the end. Otherwise, they will rise in the air for three seconds, and then be teleported back to the beginning.
+
+#### Implementation
+
+Each fixed update checks to see if the player has recently collided with a bed and did not get the 1 in 10 chance to go to the end. If this condition is met, a timer will reset, and the player will smoothly rise a bit into the air each frame. The distance to rise each frame is determined via linear interpolation, with the parameters of the player's original position, the position in the air (which is the player's original position, but with 10 added to the Y-value), and the time elapsed divided by three seconds (the time to spend rising into the air).
+
+```c#
+void FixedUpdate()
+{
+    if (rand_bed_action >= 0)
+    {
+        if (time_spent_rising >= time_to_spend_rising)
+        {
+            this.transform.position = new Vector3(-9.8f, 0.0f, -3.2f);
+            last_bed.SetActive(true);
+            rand_bed_action = -1;
+        }
+        else
+        {
+            //add time since last frame to the timer
+            time_spent_rising += Time.deltaTime;
+            //set player position to position in the air. resembles the "my people need me" meme
+            this.transform.position = Vector3.Lerp(original_player_pos, rise_to_pos, time_spent_rising / time_to_spend_rising);
+        }
+    }
+    else
+	//normal Fixed_Update execution
+
+```
+```c#
+void OnTriggerEnter(Collider other)
+{
+    if (other.gameObject.CompareTag("Bed"))
+    {
+        //1 in 10 chance of being sent to the end, otherwise rise in the air and teleport to the start
+        // < insert "my people need me" meme here >
+        rand_bed_action = Random.Range(0, 11);
+
+        if (rand_bed_action == 10)
+        {
+            //send player to the end
+            rand_bed_action = -1;
+            this.transform.position = new Vector3(18, 0, 2);
+        }
+        else
+        {
+            last_bed = other.gameObject;
+            last_bed.SetActive(false);
+            original_player_pos = this.transform.position;
+            rise_to_pos = original_player_pos;
+            rise_to_pos.y += 10;
+            time_spent_rising = 0;
+        }
+    }
+}```
