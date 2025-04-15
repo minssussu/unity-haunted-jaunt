@@ -1,6 +1,7 @@
 # Assignment 2
 
 ## Description
+
 1. [10] Get this downloaded and running:
 
 htts://assetstore.unity.com/packages/essentials/tutorial-projects/unity-learn-3d-beginner-complete-project-urp-143846
@@ -16,7 +17,6 @@ https://classes.cs.uoregon.edu/25S/cs410gameprog/assignments/Haunted-Jaunt-main.
 1. [20] Add at least one new particle effect with trigger(s).
 1. [20] Add at least one new sound effect with trigger(s).
 1. [10] In your GitHub repo readme, describe the use of the dot product, linear interpolation, particle effect, and sound effect and how to make these happen in game. Also include the names of your team members and the contributions from each team member.
-
 
 ## Author
 
@@ -89,6 +89,7 @@ void FixedUpdate()
 	//normal Fixed_Update execution
 
 ```
+
 ```c#
 void OnTriggerEnter(Collider other)
 {
@@ -114,4 +115,70 @@ void OnTriggerEnter(Collider other)
             time_spent_rising = 0;
         }
     }
-}```
+}
+```
+
+## Author
+
+Abhinav Palacharla
+
+### Sound Effect Triggers
+
+#### Feature
+
+Sound Effects Implemented:
+
+1. **Bed Interaction Sounds**: When the player interacts with beds, sounds play based on the outcome (successful teleport to end or rising/teleporting to start)
+2. **Ghost Proximity Warning**: Warning sounds play when the player gets close to ghosts but hasn't been detected yet
+3. **Floor Creak Sounds**: Certain floor areas make creaking sounds when the player walks over them
+
+#### Implementation
+
+```c#
+if (rand_bed_action == 10)
+{
+    // Play the success teleport sound
+    if (m_TeleportSuccessSound != null)
+    {
+        m_BedAudioSource.clip = m_TeleportSuccessSound;
+        m_BedAudioSource.Play();
+    }
+
+    //send player to the end
+    rand_bed_action = -1;
+    this.transform.position = new Vector3(18, 0, 2);
+}
+else
+{
+    // Play the failure/rise sound
+    if (m_TeleportFailSound != null)
+    {
+        m_BedAudioSource.clip = m_TeleportFailSound;
+        m_BedAudioSource.Play();
+    }
+
+    // Rest of the bed teleportation code...
+}
+```
+
+For ghost proximity warnings, a new component monitors the distance between the player and ghosts:
+
+```c#
+void Update()
+{
+    // Calculate distance to player
+    float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+    // If in warning distance and enough time has passed since last warning
+    if (distanceToPlayer <= warningDistance &&
+        Time.time - m_LastWarningTime > m_WarningCooldown)
+    {
+        // Play warning sound
+        if (m_AudioSource != null && m_AudioSource.clip != null && !m_AudioSource.isPlaying)
+        {
+            m_AudioSource.Play();
+            m_LastWarningTime = Time.time;
+        }
+    }
+}
+```
