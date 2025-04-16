@@ -20,7 +20,7 @@ https://classes.cs.uoregon.edu/25S/cs410gameprog/assignments/Haunted-Jaunt-main.
 
 ## Authors
 
-Brett DeWitt, Ashley Rush, Abhinav Palacharla
+Brett DeWitt, Ashley Rush, Abhinav Palacharla, Minsu Kim
 
 ## Solutions
 
@@ -192,6 +192,7 @@ if (time_spent_rising >= time_to_spend_rising)
     last_bed.SetActive(true);
     rand_bed_action = -1;
     particle_system.Stop();
+    airBurstEffect.Stop();
 }
 ```
 ```c#
@@ -210,6 +211,7 @@ else
     rise_to_pos.y += 10;
     time_spent_rising = 0;
     particle_system.Play();
+    airBurstEffect.Play();
     isWalking = false;
     m_AudioSource.Stop();
 }
