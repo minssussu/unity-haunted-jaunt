@@ -19,6 +19,7 @@ public class PlayerMovement : MonoBehaviour
     private float time_spent_rising;
     private float time_to_spend_rising = 3;
 
+    public ParticleSystem airBurstEffect;
     public ParticleSystem particle_system;
     bool isWalking;
 
@@ -42,6 +43,7 @@ public class PlayerMovement : MonoBehaviour
                 last_bed.SetActive(true);
                 rand_bed_action = -1;
                 particle_system.Stop();
+                airBurstEffect.Stop();
             }
             else
             {
@@ -108,6 +110,7 @@ public class PlayerMovement : MonoBehaviour
                 rise_to_pos.y += 10;
                 time_spent_rising = 0;
                 particle_system.Play();
+                airBurstEffect.Play();
                 isWalking = false;
                 m_AudioSource.Stop();
             }
