@@ -175,11 +175,13 @@ void Update()
 }
 ```
 
-### Particle Effect - Ashley Rush
+### Particle Effect - Ashley Rush, Minsu Kim
 
 #### Feature
 
 If the player comes into contact with the bed, as they rise into the air, a trail of lemon particles will be left behind, and expire after a half-second.
+
+Added an air bursting effect when the player triggers with the bed and jump.
 
 #### Implementation
 
@@ -192,6 +194,8 @@ if (time_spent_rising >= time_to_spend_rising)
     last_bed.SetActive(true);
     rand_bed_action = -1;
     particle_system.Stop();
+
+    airBurstEffect.Stop();
 }
 ```
 ```c#
@@ -210,6 +214,7 @@ else
     rise_to_pos.y += 10;
     time_spent_rising = 0;
     particle_system.Play();
+    airBurstEffect.Play();
     isWalking = false;
     m_AudioSource.Stop();
 }
