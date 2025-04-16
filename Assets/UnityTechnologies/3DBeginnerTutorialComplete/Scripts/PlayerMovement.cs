@@ -5,14 +5,10 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     public float turnSpeed = 20f;
-    // Using existing sound files from the project
-    private AudioClip m_TeleportSuccessSound; // SFXWin.wav will be used
-    private AudioClip m_TeleportFailSound;   // SFXGameOver.wav will be used
 
     Animator m_Animator;
     Rigidbody m_Rigidbody;
     AudioSource m_AudioSource;
-    AudioSource m_BedAudioSource; // Separate audio source for bed sound effects
     Vector3 m_Movement;
     Quaternion m_Rotation = Quaternion.identity;
 
@@ -23,6 +19,9 @@ public class PlayerMovement : MonoBehaviour
     private float time_spent_rising;
     private float time_to_spend_rising = 3;
 
+    public ParticleSystem particle_system;
+    bool isWalking;
+
     Vector3 original_player_pos;
 
     void Start ()
@@ -30,32 +29,7 @@ public class PlayerMovement : MonoBehaviour
         m_Animator = GetComponent<Animator> ();
         m_Rigidbody = GetComponent<Rigidbody> ();
         m_AudioSource = GetComponent<AudioSource> ();
-        
-        // Create a separate audio source for bed sound effects
-        m_BedAudioSource = gameObject.AddComponent<AudioSource>();
-        m_BedAudioSource.playOnAwake = false;
-        m_BedAudioSource.spatialBlend = 0.0f; // Make it 2D sound (follows player)
-        m_BedAudioSource.volume = 1.0f;
-        
-        // Load existing sound effects from the project
-        m_TeleportSuccessSound = Resources.Load<AudioClip>("UnityTechnologies/3DBeginnerTutorialComplete/Audio/SFXWin");
-        m_TeleportFailSound = Resources.Load<AudioClip>("UnityTechnologies/3DBeginnerTutorialComplete/Audio/SFXGameOver");
-        
-        // If we couldn't load them from Resources, try to find them directly
-        if (m_TeleportSuccessSound == null)
-        {
-            AudioSource[] audioSources = FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
-            foreach (AudioSource source in audioSources)
-            {
-                if (source.clip != null)
-                {
-                    if (source.clip.name == "SFXWin")
-                        m_TeleportSuccessSound = source.clip;
-                    else if (source.clip.name == "SFXGameOver")
-                        m_TeleportFailSound = source.clip;
-                }
-            }
-        }
+        //particle_system = GetComponent<ParticleSystem>();
     }
 
     void FixedUpdate()
@@ -64,16 +38,10 @@ public class PlayerMovement : MonoBehaviour
         {
             if (time_spent_rising >= time_to_spend_rising)
             {
-                // Play a teleport sound when the player is teleported back to start
-                if (m_TeleportFailSound != null)
-                {
-                    m_BedAudioSource.clip = m_TeleportFailSound;
-                    m_BedAudioSource.Play();
-                }
-                
                 this.transform.position = new Vector3(-9.8f, 0.0f, -3.2f);
                 last_bed.SetActive(true);
                 rand_bed_action = -1;
+                particle_system.Stop();
             }
             else
             {
@@ -93,7 +61,7 @@ public class PlayerMovement : MonoBehaviour
 
             bool hasHorizontalInput = !Mathf.Approximately(horizontal, 0f);
             bool hasVerticalInput = !Mathf.Approximately(vertical, 0f);
-            bool isWalking = hasHorizontalInput || hasVerticalInput;
+            isWalking = hasHorizontalInput || hasVerticalInput;
             m_Animator.SetBool("IsWalking", isWalking);
 
             if (isWalking)
@@ -127,32 +95,21 @@ public class PlayerMovement : MonoBehaviour
 
             if (rand_bed_action == 10)
             {
-                // Play the success teleport sound
-                if (m_TeleportSuccessSound != null)
-                {
-                    m_BedAudioSource.clip = m_TeleportSuccessSound;
-                    m_BedAudioSource.Play();
-                }
-                
                 //send player to the end
                 rand_bed_action = -1;
                 this.transform.position = new Vector3(18, 0, 2);
             }
             else
             {
-                // Play the failure/rise sound
-                if (m_TeleportFailSound != null)
-                {
-                    m_BedAudioSource.clip = m_TeleportFailSound;
-                    m_BedAudioSource.Play();
-                }
-                
                 last_bed = other.gameObject;
                 last_bed.SetActive(false);
                 original_player_pos = this.transform.position;
                 rise_to_pos = original_player_pos;
                 rise_to_pos.y += 10;
                 time_spent_rising = 0;
+                particle_system.Play();
+                isWalking = false;
+                m_AudioSource.Stop();
             }
         }
     }

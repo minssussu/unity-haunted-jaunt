@@ -182,3 +182,43 @@ void Update()
     }
 }
 ```
+
+### Particle Effect
+
+#### Feature
+
+If the player comes into contact with the bed, as they rise into the air, a trail of lemon particles will be left behind, and expire after a half-second.
+
+#### Implementation
+
+I was able to reuse already-existing code from the "gambling beds" for the particle effect trigger. All I added was code to turn on and off the particle system.
+
+```c#
+if (time_spent_rising >= time_to_spend_rising)
+{
+    this.transform.position = new Vector3(-9.8f, 0.0f, -3.2f);
+    last_bed.SetActive(true);
+    rand_bed_action = -1;
+    particle_system.Stop();
+}
+```
+```c#
+if (rand_bed_action == 10)
+{
+    //send player to the end
+    rand_bed_action = -1;
+    this.transform.position = new Vector3(18, 0, 2);
+}
+else
+{
+    last_bed = other.gameObject;
+    last_bed.SetActive(false);
+    original_player_pos = this.transform.position;
+    rise_to_pos = original_player_pos;
+    rise_to_pos.y += 10;
+    time_spent_rising = 0;
+    particle_system.Play();
+    isWalking = false;
+    m_AudioSource.Stop();
+}
+```
