@@ -18,13 +18,13 @@ https://classes.cs.uoregon.edu/25S/cs410gameprog/assignments/Haunted-Jaunt-main.
 1. [20] Add at least one new sound effect with trigger(s).
 1. [10] In your GitHub repo readme, describe the use of the dot product, linear interpolation, particle effect, and sound effect and how to make these happen in game. Also include the names of your team members and the contributions from each team member.
 
-## Author
+## Authors
 
-Brett DeWitt
+Brett DeWitt, Ashley Rush, Abhinav Palacharla
 
 ## Solutions
 
-### Dot Product
+### Dot Product - Brett DeWitt
 
 #### Feature
 
@@ -52,11 +52,7 @@ Structurally, I tried to mimic the observer pattern used by the ghosts to detect
     }
 ```
 
-## Author
-
-Ashley Rush
-
-### Linear Interpolation
+### Linear Interpolation - Ashley Rush
 
 #### Feature
 
@@ -118,11 +114,7 @@ void OnTriggerEnter(Collider other)
 }
 ```
 
-## Author
-
-Abhinav Palacharla
-
-### Sound Effect Triggers
+### Sound Effect Triggers - Abhinav Palacharla
 
 #### Feature
 
@@ -183,7 +175,7 @@ void Update()
 }
 ```
 
-### Particle Effect
+### Particle Effect - Ashley Rush
 
 #### Feature
 
